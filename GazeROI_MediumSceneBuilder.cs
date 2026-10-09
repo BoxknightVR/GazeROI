@@ -135,7 +135,6 @@ private bool IsPointInPolygon(Vector2 p, Vector2[] poly)
         Vector2 pi = poly[i];
         Vector2 pj = poly[j];
 
-        // 判断 (pi, pj) 这条边与从 p 水平向右射线是否相交
         bool intersect =
             ((pi.y > p.y) != (pj.y > p.y)) &&
             (p.x < (pj.x - pi.x) * (p.y - pi.y) / (pj.y - pi.y + 1e-8f) + pi.x);
@@ -155,17 +154,14 @@ private void Test_1_Basic_Model_Hourglass(float Height_Angle_Deg = 65f, float Wi
 
     Vector2 center2D = new Vector2(center3D.x, center3D.y);
 
-    // 高度、宽度对应的 world 尺寸（和你一贯做法一致）
     float heightWorld = Mathf.Tan(Height_Angle_Deg * 0.5f * Mathf.Deg2Rad) * distance * 2f;
     float widthWorld = Mathf.Tan(Width_Angle_Deg * 0.5f * Mathf.Deg2Rad) * distance * 2f;
 
     float halfH = heightWorld * 0.5f;
     float halfW = widthWorld * 0.5f;
 
-    float neckHalfW = halfW * Mathf.Clamp01(neckRatio); // 腰部一半宽度
+    float neckHalfW = halfW * Mathf.Clamp01(neckRatio);
 
-    // 构造凹多边形顶点（顺时针）
-    // 顶部从左到右 → 右腰 → 底右 → 底左 → 左腰
     Vector2 TL = center2D + new Vector2(-halfW, halfH);
     Vector2 TR = center2D + new Vector2(halfW, halfH);
     Vector2 MR = center2D + new Vector2(neckHalfW, 0f);
@@ -178,7 +174,6 @@ private void Test_1_Basic_Model_Hourglass(float Height_Angle_Deg = 65f, float Wi
     TL, TR, MR, BR, BL, ML
     };
 
-    // 挑选在沙漏内部的小球
     for (int i = Test_1_Not_Targets_Recorder.Count - 1; i >= 0; i--)
     {
         Vector3 p3 = Test_1_Not_Targets_Recorder[i].transform.position;
@@ -400,8 +395,8 @@ private List<Vector2> MakeStar(Vector2 Center, float Radius, float ratio = 0.3f,
 
     for (int k = 0; k < 10; k++)
     {
-        float ang = theta0 + k * (Mathf.PI / 5f); // 每次 36° (π/5)
-        float rad = (k % 2 == 0) ? Radius : r;         // 外外内外内...
+        float ang = theta0 + k * (Mathf.PI / 5f);
+        float rad = (k % 2 == 0) ? Radius : r;       
         verts.Add(new Vector2(
             Center.x + rad * Mathf.Cos(ang),
             Center.y + rad * Mathf.Sin(ang)
@@ -816,48 +811,6 @@ private void Test_1_Normal_Christmas_tree(float First_Top_Vertices_Level = 1f, f
         }
     }
 
-    //float Third_T_Vertices = Third_Top_Vertices_Level * Vertices;
-    //float Third_LR_Vertices = Third_Left_Right_Vertices_Level * Vertices;
-    //Vector3 Third_Center = new Vector3(Center.x, Center.y + Third_Center_Times * Vertices, Center.z);
-    //Vector2 Third_Top_Vertices = new Vector2(Third_Center.x, Third_Center.y + Third_T_Vertices);
-    //Vector2 Third_Left_Vertices = new Vector2(Third_Center.x - Third_LR_Vertices, Third_Center.y - Vertices);
-    //Vector2 Third_Right_Vertices = new Vector2(Third_Center.x + Third_LR_Vertices, Third_Center.y - Vertices);
-
-    //for (int i = Test_1_Not_Targets_Recorder.Count - 1; i >= 0; i--)
-    //{
-    //    Vector2 Cur = new Vector2(Test_1_Not_Targets_Recorder[i].transform.position.x, Test_1_Not_Targets_Recorder[i].transform.position.y);
-    //    float c1 = Test_1_Cross(Third_Top_Vertices - Third_Left_Vertices, Cur - Third_Left_Vertices);
-    //    float c2 = Test_1_Cross(Third_Right_Vertices - Third_Top_Vertices, Cur - Third_Top_Vertices);
-    //    float c3 = Test_1_Cross(Third_Left_Vertices - Third_Right_Vertices, Cur - Third_Right_Vertices);
-
-    //    bool hasNeg = (c1 < 0) || (c2 < 0) || (c3 < 0);
-    //    bool hasPos = (c1 > 0) || (c2 > 0) || (c3 > 0);
-
-    //    if (hasNeg && hasPos)
-    //    {
-    //        float d1 = Test_1_Triangle_DistPointToSegment2D(Cur, Third_Left_Vertices, Third_Top_Vertices);
-    //        float d2 = Test_1_Triangle_DistPointToSegment2D(Cur, Third_Top_Vertices, Third_Right_Vertices);
-    //        float d3 = Test_1_Triangle_DistPointToSegment2D(Cur, Third_Right_Vertices, Third_Left_Vertices);
-
-    //        float d = Mathf.Min(d1, Mathf.Min(d2, d3));
-
-    //        if (d <= scale / 2 + 1e-5f)
-    //        {
-    //            Test_1_Targets_Recorder.Add(Test_1_Not_Targets_Recorder[i]);
-    //            Test_1_Not_Targets_Recorder.RemoveAt(i);
-    //        }
-    //        else
-    //        {
-    //            continue;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        Test_1_Targets_Recorder.Add(Test_1_Not_Targets_Recorder[i]);
-    //        Test_1_Not_Targets_Recorder.RemoveAt(i);
-    //    }
-    //}
-
     Vector2 Base_Center = new Vector2(Center.x, Center.y + (Base_Buttom_Vertices_Level + Base_Top_Vertices_Level) / 2f * Vertices);
 
     for (int i = Test_1_Not_Targets_Recorder.Count - 1; i >= 0; i--)
@@ -1091,48 +1044,6 @@ private void Test_1_Normal_Avatar(float Top_Circle_Radius = 25f, int Top_Circle_
             Test_1_Not_Targets_Recorder.RemoveAt(i);
         }
     }
-
-    //float Base_T_Vertices = Base_Buttom_Vertices_Level * Vertices;
-    //float Base_LR_Vertices = Base_Buttom_Left_Right_Vertices_Level * Vertices;
-    //Vector2 Base_Center2D = new Vector2(Center.x, Center.y + Buttom_Circle_Center * Vertices);
-    //Vector2 Base_Buttom_Vertices = new Vector2(Base_Center2D.x, Base_Center2D.y + Base_T_Vertices);
-    //Vector2 Base_Left_Vertices = new Vector2(Base_Center2D.x - Base_LR_Vertices, Base_Center2D.y - Vertices);
-    //Vector2 Base_Right_Vertices = new Vector2(Base_Center2D.x + Base_LR_Vertices, Base_Center2D.y - Vertices);
-
-    //for (int i = Test_1_Not_Targets_Recorder.Count - 1; i >= 0; i--)
-    //{
-    //    Vector2 Cur = new Vector2(Test_1_Not_Targets_Recorder[i].transform.position.x, Test_1_Not_Targets_Recorder[i].transform.position.y);
-    //    float c1 = Test_1_Cross(Base_Buttom_Vertices - Base_Left_Vertices, Cur - Base_Left_Vertices);
-    //    float c2 = Test_1_Cross(Base_Right_Vertices - Base_Buttom_Vertices, Cur - Base_Buttom_Vertices);
-    //    float c3 = Test_1_Cross(Base_Left_Vertices - Base_Right_Vertices, Cur - Base_Right_Vertices);
-
-    //    bool hasNeg = (c1 < 0) || (c2 < 0) || (c3 < 0);
-    //    bool hasPos = (c1 > 0) || (c2 > 0) || (c3 > 0);
-
-    //    if (hasNeg && hasPos)
-    //    {
-    //        float d1 = Test_1_Triangle_DistPointToSegment2D(Cur, Base_Left_Vertices, Base_Buttom_Vertices);
-    //        float d2 = Test_1_Triangle_DistPointToSegment2D(Cur, Base_Buttom_Vertices, Base_Right_Vertices);
-    //        float d3 = Test_1_Triangle_DistPointToSegment2D(Cur, Base_Right_Vertices, Base_Left_Vertices);
-
-    //        float d = Mathf.Min(d1, Mathf.Min(d2, d3));
-
-    //        if (d <= scale / 2 + 1e-5f)
-    //        {
-    //            Test_1_Targets_Recorder.Add(Test_1_Not_Targets_Recorder[i]);
-    //            Test_1_Not_Targets_Recorder.RemoveAt(i);
-    //        }
-    //        else
-    //        {
-    //            continue;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        Test_1_Targets_Recorder.Add(Test_1_Not_Targets_Recorder[i]);
-    //        Test_1_Not_Targets_Recorder.RemoveAt(i);
-    //    }
-    //}
 
     for (int i = 0; i < Test_1_Targets_Recorder.Count; i++)
     {
